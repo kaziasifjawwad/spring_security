@@ -4,25 +4,31 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
 
     private final String userName;
     private final String password;
     private final boolean active;
-    private List<GrantedAuthority> authorities;
+    private final List<GrantedAuthority> authorities;
 
+    //TODO
+    /*  convert it with stream  */
     public MyUserDetails(User user) {
         this.userName = user.getEmail();
         this.password = user.getPassword();
         this.active = user.isActive();
-        this.authorities = Arrays.stream(user.getRoles().split(","))
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+        this.authorities = new LinkedList<>();
+        for(Role role : user.getRoles()){
+            this.authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+//        this.authorities = Arrays.stream(user.getRoles().split(","))
+//                    .map(SimpleGrantedAuthority::new)
+//                    .collect(Collectors.toList());
     }
 
     @Override

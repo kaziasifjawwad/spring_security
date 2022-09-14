@@ -1,32 +1,38 @@
 package com.brainstation.spring_security.security;
 
+import com.brainstation.spring_security.security.jwt.JwtRequestFilter;
 import com.brainstation.spring_security.service.MyUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-//   @Bean
-//    public BCryptPasswordEncoder getbCryptPasswordEncoder(){
-//       return new BCryptPasswordEncoder();
-//   }
+    JwtRequestFilter jwtRequestFilter;
+
+@Autowired
+    public void setJwtRequestFilter(JwtRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
+
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(5);
     }
+
+
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
@@ -48,7 +54,7 @@ public class SecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll() // (3)
+//                .antMatchers("/**").permitAll() // (3)
                 .anyRequest().authenticated() // (4)
                 .and()
                 .formLogin() // (5)
@@ -59,17 +65,12 @@ public class SecurityConfiguration {
                 .permitAll()
                 .and()
                 .httpBasic(); // (7)
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
-//    @Bean
-//    public AuthenticationManager authManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailService)
-//            throws Exception {
-//        return http.getSharedObject(AuthenticationManagerBuilder.class)
-//                .userDetailsService(userDetailService)
-//                .passwordEncoder(bCryptPasswordEncoder)
-//                .and()
-//                .build();
-//    }
-
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 }
