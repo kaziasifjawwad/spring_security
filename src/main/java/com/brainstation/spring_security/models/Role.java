@@ -1,15 +1,16 @@
 package com.brainstation.spring_security.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Role {
 
     @Id
@@ -19,7 +20,8 @@ public class Role {
     @Column(unique = true)
     private String name;
 
-//    @ManyToMany(mappedBy = "roles")
-//    private Collection<User> users;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles")
+    private Collection<User> users;
 
 }

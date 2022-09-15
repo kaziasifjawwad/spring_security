@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -16,7 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class User {
+@Accessors(chain = true)
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -25,11 +28,9 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @JsonIgnore
     private String password;
     private boolean active;
 
-//    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",

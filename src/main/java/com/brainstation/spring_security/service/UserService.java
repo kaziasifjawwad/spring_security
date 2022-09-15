@@ -8,43 +8,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class UserService {
-    private UserRepository userRepository;
+  private UserRepository userRepository;
 
-    private RoleRepository roleRepository;
+  private RoleRepository roleRepository;
 
-    @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+  @Autowired
+  public void setRoleRepository(RoleRepository roleRepository) {
+    this.roleRepository = roleRepository;
+  }
 
-    private PasswordEncoder passwordEncoder;
+  private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+  @Autowired
+  public void setUserRepository(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-    @Autowired
-    public void setbCryptPasswordEncoder(PasswordEncoder bCryptPasswordEncoder) {
-        this.passwordEncoder = bCryptPasswordEncoder;
-    }
+  @Autowired
+  public void setbCryptPasswordEncoder(PasswordEncoder bCryptPasswordEncoder) {
+    this.passwordEncoder = bCryptPasswordEncoder;
+  }
 
-    public User saveUser(RegistrationForm registrationForm) {
-        User user = new User();
-        user.setEmail(registrationForm.getEmail());
-        user.setPassword(passwordEncoder.encode(registrationForm.getPassword()));
-        user.setRoles(
-                new LinkedList<>()
-        );
-//        System.out.println(this.roleRepository.findByName("user"));
-        user.getRoles().add(
-                this.roleRepository.findByName("user")
-        );
-        return this.userRepository.save(user);
-    }
+  public User saveUser(RegistrationForm registrationForm) {
+    User user = new User()
+      .setEmail(registrationForm.getEmail())
+      .setPassword(passwordEncoder.encode(registrationForm.getPassword()));
+    var role = roleRepository.findById(registrationForm.getRoleId()).get();
+    var roles = List.of(role);
+    user.setRoles(roles);
+    return this.userRepository.save(user);
+  }
 }

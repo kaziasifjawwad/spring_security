@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class RegistrationForm {
     private String email;
     private String password;
+    private Long roleId;
 }
