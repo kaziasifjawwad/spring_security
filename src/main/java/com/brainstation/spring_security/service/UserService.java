@@ -1,5 +1,6 @@
 package com.brainstation.spring_security.service;
 
+import com.brainstation.spring_security.models.Role;
 import com.brainstation.spring_security.models.User;
 import com.brainstation.spring_security.pojo.RegistrationForm;
 import com.brainstation.spring_security.repository.RoleRepository;
@@ -37,9 +38,11 @@ public class UserService {
     User user = new User()
       .setEmail(registrationForm.getEmail())
       .setPassword(passwordEncoder.encode(registrationForm.getPassword()));
-    var role = roleRepository.findById(registrationForm.getRoleId()).get();
-    var roles = List.of(role);
+    Role role = roleRepository.findByName("user");
+    System.out.println(role);
+    List<Role> roles = List.of(role);
     user.setRoles(roles);
+    user.setActive(true);
     return this.userRepository.save(user);
   }
 }
