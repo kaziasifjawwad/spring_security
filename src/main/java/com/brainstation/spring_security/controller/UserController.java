@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/user")
 
@@ -32,14 +34,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createNewUser(@RequestBody RegistrationForm registrationForm) {
+    public ResponseEntity<User> createNewUser(@Valid @RequestBody RegistrationForm registrationForm) {
         return new ResponseEntity<>(
                 this.userService.saveUser(registrationForm), HttpStatus.OK
         );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<APIResponse<?>> login(@RequestBody LoginUserDto loginUser) {
+    public ResponseEntity<APIResponse<?>> login(@Valid @RequestBody LoginUserDto loginUser) {
         try {
             return new ResponseEntity<>(
                     new APIResponse<>(
