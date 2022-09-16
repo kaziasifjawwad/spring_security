@@ -13,36 +13,40 @@ import java.util.List;
 
 @Service
 public class UserService {
-  private UserRepository userRepository;
+    private UserRepository userRepository;
 
-  private RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
-  @Autowired
-  public void setRoleRepository(RoleRepository roleRepository) {
-    this.roleRepository = roleRepository;
-  }
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
-  private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  public void setUserRepository(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-  @Autowired
-  public void setbCryptPasswordEncoder(PasswordEncoder bCryptPasswordEncoder) {
-    this.passwordEncoder = bCryptPasswordEncoder;
-  }
+    @Autowired
+    public void setbCryptPasswordEncoder(PasswordEncoder bCryptPasswordEncoder) {
+        this.passwordEncoder = bCryptPasswordEncoder;
+    }
 
-  public User saveUser(RegistrationForm registrationForm) {
-    User user = new User()
-      .setEmail(registrationForm.getEmail())
-      .setPassword(passwordEncoder.encode(registrationForm.getPassword()));
-    Role role = roleRepository.findByName("user");
-    System.out.println(role);
-    List<Role> roles = List.of(role);
-    user.setRoles(roles);
-    user.setActive(true);
-    return this.userRepository.save(user);
-  }
+    public User saveUser(RegistrationForm registrationForm) {
+        Role role = roleRepository.findByName("user");
+        List<Role> roles = List.of(role);
+        User user = new User()
+                .setEmail(registrationForm.getEmail())
+                .setPassword(passwordEncoder.encode(registrationForm.getPassword()))
+                .setEnabled(true)
+                .setActive(true)
+                .setAccountNonExpired(true)
+                .setAccountNonLocked(true)
+                .setCredentialsNonExpired(true)
+                .setRoles(roles);
+
+        return this.userRepository.save(user);
+    }
 }

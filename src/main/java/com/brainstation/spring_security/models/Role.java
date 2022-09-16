@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Entity
@@ -18,6 +19,7 @@ public class Role {
     private Long id;
 
     @Column(unique = true)
+    @NotNull
     private String name;
 
     @JsonIgnore

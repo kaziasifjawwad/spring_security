@@ -4,8 +4,10 @@ import com.brainstation.spring_security.pojo.LoginUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -24,7 +26,7 @@ public class TokenService {
         this.jwtEncoder = jwtEncoder;
     }
 
-    public String getAuthentication(LoginUserDto loginUser) throws BadCredentialsException {
+    public String getAuthentication(LoginUserDto loginUser) throws BadCredentialsException, InternalAuthenticationServiceException {
 
             String token = generateToken(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginUser.getEmail(), loginUser.getPassword())

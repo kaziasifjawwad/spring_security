@@ -28,8 +28,18 @@ public class User implements Serializable {
     @Column(unique = true)
     private String email;
 
+    @JsonIgnore
     private String password;
+
     private boolean active;
+
+    private boolean isAccountNonExpired;
+
+    private boolean isAccountNonLocked;
+
+    private boolean isCredentialsNonExpired;
+
+    private boolean isEnabled;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -40,8 +50,4 @@ public class User implements Serializable {
                     name = "role_id"))
 
     private List<Role> roles;
-
-    public boolean isActive() {
-        return active;
-    }
 }

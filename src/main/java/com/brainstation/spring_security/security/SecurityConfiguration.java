@@ -38,6 +38,7 @@ public class SecurityConfiguration {
         return new MyUserDetailsService();
     }
 
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(5);
@@ -77,26 +78,6 @@ public class SecurityConfiguration {
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().disable()
-//                .authorizeRequests()
-//                .antMatchers("/**").permitAll() // (3)
-//                .anyRequest().authenticated() // (4)
-//                .and()
-//                .formLogin() // (5)
-//                .loginPage("/login") // (5)
-//                .permitAll()
-//                .and()
-//                .logout() // (6)
-//                .permitAll()
-//                .and()
-//                .httpBasic(); // (7)
-//        return http.build();
-//    }
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http, UserDetailsService userDetailsService,
