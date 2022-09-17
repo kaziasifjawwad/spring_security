@@ -2,7 +2,7 @@ package com.brainstation.spring_security.controller;
 
 import com.brainstation.spring_security.models.Role;
 import com.brainstation.spring_security.pojo.APIResponse;
-import com.brainstation.spring_security.pojo.ErrorMessage;
+import com.brainstation.spring_security.pojo.ResponseMessage;
 import com.brainstation.spring_security.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,7 +35,7 @@ public class RoleController {
                     new APIResponse<>(this.roleService.saveRole(role)), HttpStatus.OK);
         } catch (DataIntegrityViolationException e) {
             return new ResponseEntity<>(new APIResponse<>(
-                    new ErrorMessage(role.getName()+" is already exists")
+                    new ResponseMessage(role.getName()+" is already exists")
             ), HttpStatus.BAD_REQUEST);
         }
     }

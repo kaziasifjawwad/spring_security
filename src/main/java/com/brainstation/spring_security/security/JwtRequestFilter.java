@@ -44,7 +44,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 jwtToken = requestTokenHeader.substring(7);
                 JwtToken tokenCheck = jwtTokenRepository.findByToken(jwtToken);
-                if (tokenCheck != null) throw new BadCredentialsException("Wrong JWT token");
+                if (tokenCheck == null) throw new BadCredentialsException("Wrong JWT token");
 
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {

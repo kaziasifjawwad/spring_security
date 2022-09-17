@@ -9,12 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/user")
@@ -28,6 +26,7 @@ public class UserController {
     public void setTokenService(TokenService tokenService) {
         this.tokenService = tokenService;
     }
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -51,10 +50,25 @@ public class UserController {
                     ), HttpStatus.OK);
         } catch (BadCredentialsException badCredentialsException) {
             return new ResponseEntity<>(
-                    new APIResponse<>(new ErrorMessage("Wrong user credential")), HttpStatus.BAD_REQUEST);
+                    new APIResponse<>(new ResponseMessage("Wrong user credential")), HttpStatus.BAD_REQUEST);
         } catch (InternalAuthenticationServiceException internalAuthenticationServiceException) {
             return new ResponseEntity<>(
-                    new APIResponse<>(new ErrorMessage("No user with this email found")), HttpStatus.BAD_REQUEST);
+                    new APIResponse<>(new ResponseMessage("No user with this email found")), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<APIResponse<?>> logout(@RequestBody LogOutDto logOutDto) {
+        try {
+            this.tokenService.deleteToken(logOutDto.getJwtToken());
+            return new ResponseEntity<>(
+                    new APIResponse<>(new ResponseMessage("user logged out")), HttpStatus.OK);
+        } catch (NoSuchElementException noSuchElementException) {
+            return new ResponseEntity<>(
+                    new APIResponse<>(new ResponseMessage("Wrong JWT token")), HttpStatus.BAD_REQUEST);
+        } catch (BadCredentialsException badCredentialsException) {
+            return new ResponseEntity<>(
+                    new APIResponse<>(new ResponseMessage("You are not allowed to do this job")), HttpStatus.BAD_REQUEST);
         }
     }
 }
