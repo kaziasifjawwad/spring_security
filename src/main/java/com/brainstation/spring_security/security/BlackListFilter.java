@@ -3,6 +3,7 @@ package com.brainstation.spring_security.security;
 import com.brainstation.spring_security.models.JwtToken;
 import com.brainstation.spring_security.repository.JwtTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
