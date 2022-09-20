@@ -2,6 +2,8 @@ package com.brainstation.spring_security.security;
 
 import com.brainstation.spring_security.config.RsaKeyProperties;
 import com.brainstation.spring_security.repository.JwtTokenRepository;
+import com.brainstation.spring_security.security.customJWTRquestFilterTools.CustomJwtRequestFilter;
+import com.brainstation.spring_security.security.customJWTRquestFilterTools.JwtTokenUtil;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -16,6 +18,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,8 +27,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -41,8 +44,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    JwtRequestFilter jwtRequestFilter(UserDetailsService customUserDetailsService, JwtTokenUtil jwtTokenUtil, JwtTokenRepository jwtTokenRepository) {
-        return new JwtRequestFilter(customUserDetailsService, jwtTokenUtil, jwtTokenRepository);
+    CustomJwtRequestFilter jwtRequestFilter(UserDetailsService customUserDetailsService, JwtTokenUtil jwtTokenUtil, JwtTokenRepository jwtTokenRepository) {
+        return new CustomJwtRequestFilter(customUserDetailsService, jwtTokenUtil, jwtTokenRepository);
     }
 
     @Bean
@@ -50,6 +53,10 @@ public class SecurityConfiguration {
         return new MyUserDetailsService();
     }
 
+    @Bean
+    public BlackListFilter blackListFilter() {
+        return new BlackListFilter();
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -58,7 +65,8 @@ public class SecurityConfiguration {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http
+            , BlackListFilter blackListFilter) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth ->
@@ -73,8 +81,8 @@ public class SecurityConfiguration {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .addFilterAfter(blackListFilter, BearerTokenAuthenticationFilter.class)
                 .build();
     }
 

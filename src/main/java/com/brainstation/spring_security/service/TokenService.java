@@ -3,7 +3,7 @@ package com.brainstation.spring_security.service;
 import com.brainstation.spring_security.models.JwtToken;
 import com.brainstation.spring_security.pojo.LoginUserDto;
 import com.brainstation.spring_security.repository.JwtTokenRepository;
-import com.brainstation.spring_security.security.JwtTokenUtil;
+import com.brainstation.spring_security.security.customJWTRquestFilterTools.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

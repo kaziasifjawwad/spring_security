@@ -1,16 +1,14 @@
-package com.brainstation.spring_security.security;
+package com.brainstation.spring_security.security.customJWTRquestFilterTools;
 
 import com.brainstation.spring_security.models.JwtToken;
 import com.brainstation.spring_security.repository.JwtTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -19,12 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class CustomJwtRequestFilter extends OncePerRequestFilter {
     private UserDetailsService customUserDetailsService;
     private JwtTokenUtil jwtTokenUtil;
     private JwtTokenRepository jwtTokenRepository;
 
-    public JwtRequestFilter(UserDetailsService customUserDetailsService, JwtTokenUtil jwtTokenUtil, JwtTokenRepository jwtTokenRepository) {
+    public CustomJwtRequestFilter(UserDetailsService customUserDetailsService, JwtTokenUtil jwtTokenUtil, JwtTokenRepository jwtTokenRepository) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtTokenRepository = jwtTokenRepository;
